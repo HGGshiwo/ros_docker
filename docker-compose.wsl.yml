@@ -1,0 +1,5 @@
+services:
+  desktop:
+    ports:
+      - "6080:6080"    # noVNC web 访问端口
+      - "5901:5901"    # VNC 客户端直连端口 (可选)

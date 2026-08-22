@@ -38,7 +38,15 @@ fi
 
 # 强制将挂载的各个目录和脚本所有权交给 UID 1000 (即即将创建的 ubuntu 用户)
 # 使用 1000:1000 避免在用户创建前运行 chown 导致 "invalid user: ubuntu:ubuntu" 报错
-for path in "/home/ubuntu" "$UBUNTU_BASHRC" "/home/ubuntu/.config/autostart" "/home/ubuntu/catkin_ws" "/home/ubuntu/setup_env" "/home/ubuntu/setup_env.sh"; do
+
+# 1. 仅改变 /home/ubuntu 目录本身的权限，不进行递归（避免修改只读挂载文件如 .gitconfig 的所有权而报错）
+if [ -d "/home/ubuntu" ]; then
+    echo "* Setting ownership of /home/ubuntu to 1000:1000"
+    chown 1000:1000 "/home/ubuntu"
+fi
+
+# 2. 递归地将其它挂载的子目录和可写文件所有权修改为 1000:1000
+for path in "$UBUNTU_BASHRC" "/home/ubuntu/.config" "/home/ubuntu/catkin_ws" "/home/ubuntu/setup_env" "/home/ubuntu/setup_env.sh"; do
     if [ -e "$path" ]; then
         echo "* Setting ownership of $path to 1000:1000"
         chown -R 1000:1000 "$path"
