@@ -1,0 +1,16 @@
+FROM tiryoh/ros-desktop-vnc:noetic-20260426T0516
+
+# 创建自定义 supervisor 配置目录，并修改主配置文件引入该目录下的所有 .conf 文件
+RUN mkdir -p /etc/supervisor/custom.d && \
+    sed -i 's|files = /etc/supervisor/conf.d/\*\.conf|files = /etc/supervisor/conf.d/*.conf /etc/supervisor/custom.d/*.conf|g' /etc/supervisor/supervisord.conf
+
+# 拷贝并设置自定义的入口脚本，用于在启动时修正挂载目录权限
+COPY custom_entrypoint.sh /custom_entrypoint.sh
+RUN chmod +x /custom_entrypoint.sh
+
+# 将 ROS 官方源替换为清华镜像源，并从 Ubuntu 密钥服务器获取 ROS GPG 秘钥
+RUN echo "deb http://mirrors.tuna.tsinghua.edu.cn/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list && \
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 && \
+    apt-get update && apt-get install -y ros-noetic-mavros ros-noetic-mavros-extras
+
+ENTRYPOINT [ "/custom_entrypoint.sh" ]

@@ -1,0 +1,7 @@
+# Git 仓库配置列表
+repositories:
+  - url: "https://github.com/hggshiwo/bridge_routes.git"
+    branch: ""
+
+  - url: "https://github.com/hggshiwo/bridge_mavlink.git"
+    branch: ""

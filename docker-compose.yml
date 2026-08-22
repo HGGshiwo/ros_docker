@@ -1,0 +1,31 @@
+services:
+  desktop:
+    build: .
+    container_name: ubuntu_desktop
+    image: ros-desktop-vnc:zb1.0
+    network_mode: host
+    environment:
+      - VNC_PORT=6080
+    volumes:
+      # 挂载自定义 bashrc 配置文件
+      - ./config/my_bashrc:/etc/my_bashrc
+      # 挂载宿主机的桌面自启目录，直接映射到容器内 ubuntu 用户的配置中
+      - ./my_desktop_autostart:/home/ubuntu/.config/autostart
+      # 挂载宿主机的 Supervisor 配置目录，用于管理后台进程
+      - ./my_supervisor_conf:/etc/supervisor/custom.d
+      # 挂载 ROS 工作空间
+      - ./catkin_ws:/home/ubuntu/catkin_ws
+      # 挂载环境拉取和初始化脚本
+      - ./setup_env:/home/ubuntu/setup_env
+      - ./setup_env.sh:/home/ubuntu/setup_env.sh
+      # 挂载并持久化终端历史记录
+      - ./config/.bash_history:/home/ubuntu/.bash_history
+      # 挂载并持久化 Terminator 配置
+      - ./config/terminator_config:/home/ubuntu/.config/terminator/config
+      # 挂载并持久化 ROS 运行日志
+      - ./logs/ros:/home/ubuntu/.ros/log
+      # 挂载并持久化 VS Code 插件
+      - ./config/.vscode-server:/home/ubuntu/.vscode-server
+      # 只读方式挂载宿主机的 Git 配置以复用凭证和用户名
+      - ~/.gitconfig:/home/ubuntu/.gitconfig:ro
+    restart: unless-stopped

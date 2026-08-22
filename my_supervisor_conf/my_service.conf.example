@@ -1,0 +1,8 @@
+[program:my_service]
+command=/bin/bash -c "source /opt/ros/noetic/setup.bash && roslaunch my_package my_launch.launch"
+autostart=true
+autorestart=true
+user=ubuntu
+environment=DISPLAY=":1"
+stdout_logfile=/var/log/my_service.log
+stderr_logfile=/var/log/my_service.err
