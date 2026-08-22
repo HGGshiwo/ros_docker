@@ -34,7 +34,10 @@ fi
 IMAGE_NAME="ros-desktop-vnc"
 FULL_TAG="${IMAGE_NAME}:${TAG}"
 
-echo "开始构建 Docker 镜像: ${FULL_TAG}，使用文件: ${DOCKERFILE}..."
-docker build -f "$DOCKERFILE" -t "$FULL_TAG" .
+# 移除第一个参数 (TAG)，将剩余的所有参数传递给 docker build
+shift
+
+echo "开始构建 Docker 镜像: ${FULL_TAG}，使用文件: ${DOCKERFILE}，其它参数: $@..."
+docker build "$@" -f "$DOCKERFILE" -t "$FULL_TAG" .
 
 echo "构建成功"

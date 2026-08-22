@@ -9,10 +9,12 @@ cd "$DIR"
 
 # 自动检测运行环境是否为 WSL 或 Docker Desktop
 if grep -qi -E "microsoft|wsl" /proc/version 2>/dev/null || uname -r | grep -qi -E "microsoft|wsl"; then
-    echo "检测到 WSL / Docker Desktop 环境，使用桥接网络启动..."
+    echo "检测到 WSL / Docker Desktop 环境，使用桥接网络启动（映射端口 6080 和 5901）..."
+    docker compose -f docker-compose.yml -f docker-compose.wsl.yml down
     docker compose -f docker-compose.yml -f docker-compose.wsl.yml up -d
 else
-    echo "检测到原生 Linux 环境，使用 Host 网络模式启动..."
+    echo "检测到原生 Linux 环境，使用 Host 网络模式启动（直接绑定宿主机 6080 端口）..."
+    docker compose -f docker-compose.yml -f docker-compose.linux.yml down
     docker compose -f docker-compose.yml -f docker-compose.linux.yml up -d
 fi
 

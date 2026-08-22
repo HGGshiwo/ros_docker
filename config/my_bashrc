@@ -5,7 +5,12 @@ export ROS_IP=127.0.0.1
 export ROS_MASTER_URI=http://127.0.0.1:11311
 
 # 配置代理
-# export my_proxy=http://192.168.251.7890
+export my_proxy=http://localhost:10808
 
 export http_proxy=$my_proxy
 export https_proxy=$my_proxy
+
+# 自动检测并载入编译好的 ROS 工作空间环境变量
+if [ -f "/home/ubuntu/catkin_ws/devel/setup.bash" ]; then
+    source "/home/ubuntu/catkin_ws/devel/setup.bash"
+fi
