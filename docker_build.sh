@@ -34,7 +34,6 @@ fi
 IMAGE_NAME="ros-desktop-vnc"
 FULL_TAG="${IMAGE_NAME}:${TAG}"
 
-# ================= 新增：自动获取环境变量 =================
 BUILD_ARGS=()
 
 # 定义需要传递的环境变量列表（通常主要是代理设置）
@@ -51,11 +50,11 @@ for var in "${VARS_TO_PASS[@]}"; do
         echo "检测到环境变量: $var=${!var}，将传递给 Docker"
     fi
 done
-# ==========================================================
 
-echo "开始构建 Docker 镜像: ${FULL_TAG}，使用文件: ${DOCKERFILE}..."
+# 移除第一个参数 (TAG)，将剩余的所有参数传递给 docker build
+shift
 
-# 在构建命令中展开 ${BUILD_ARGS[@]}
-docker build "${BUILD_ARGS[@]}" -f "$DOCKERFILE" -t "$FULL_TAG" .
+echo "开始构建 Docker 镜像: ${FULL_TAG}，使用文件: ${DOCKERFILE}，其它参数: $@..."
+docker build "${BUILD_ARGS[@]}" "$@" -f "$DOCKERFILE" -t "$FULL_TAG" .
 
 echo "构建成功"

@@ -3,7 +3,6 @@ services:
     build: .
     container_name: ubuntu_desktop
     image: ros-desktop-vnc:zb1.0
-    network_mode: host
     environment:
       - VNC_PORT=6080
     volumes:
@@ -15,9 +14,8 @@ services:
       - ./my_supervisor_conf:/etc/supervisor/custom.d
       # 挂载 ROS 工作空间
       - ./catkin_ws:/home/ubuntu/catkin_ws
-      # 挂载环境拉取和初始化脚本
-      - ./setup_env:/home/ubuntu/setup_env
-      - ./setup_env.sh:/home/ubuntu/setup_env.sh
+      # 挂载自定义终端自启动脚本目录
+      - ./my_terminal_autostart:/home/ubuntu/my_terminal_autostart
       # 挂载并持久化终端历史记录
       - ./config/.bash_history:/home/ubuntu/.bash_history
       # 挂载并持久化 Terminator 配置

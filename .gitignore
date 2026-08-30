@@ -3,3 +3,4 @@ logs/
 config/.vscode-server/
 config/.bash_history
 catkin_ws/
+.vscode/

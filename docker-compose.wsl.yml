@@ -1,0 +1,12 @@
+services:
+  desktop:
+    ports:
+      - "6080:6080"    # noVNC web 访问端口
+      - "5901:5901"    # VNC 客户端直连端口 (可选)
+      - "41883:41883"  # mqtt 连接端口
+      - "8000:8000" # http 接口
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - FCU_URL=tcp://host.docker.internal:5760
+      - MQTT_HOST=host.docker.internal
