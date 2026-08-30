@@ -51,8 +51,10 @@ for var in "${VARS_TO_PASS[@]}"; do
     fi
 done
 
-# 移除第一个参数 (TAG)，将剩余的所有参数传递给 docker build
-shift
+# 如果有传入参数，才移除第一个参数 (TAG)，将剩余的所有参数传递给 docker build
+if [ $# -gt 0 ]; then
+    shift
+fi
 
 echo "开始构建 Docker 镜像: ${FULL_TAG}，使用文件: ${DOCKERFILE}，其它参数: $@..."
 docker build "${BUILD_ARGS[@]}" "$@" -f "$DOCKERFILE" -t "$FULL_TAG" .
