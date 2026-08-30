@@ -9,8 +9,10 @@ COPY custom_entrypoint.sh /custom_entrypoint.sh
 RUN chmod +x /custom_entrypoint.sh
 
 # 将 ROS 官方源替换为清华镜像源，并从 Ubuntu 密钥服务器获取 ROS GPG 秘钥
-RUN echo "deb http://mirrors.tuna.tsinghua.edu.cn/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list && \
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 && \
-    apt-get update && apt-get install -y ros-noetic-mavros ros-noetic-mavros-extras
-
+RUN apt-get update && apt-get install -y curl gnupg2 && \
+    curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | apt-key add - && \
+    echo "deb http://mirrors.tuna.tsinghua.edu.cn/ros/ubuntu focal main" > /etc/apt/sources.list.d/ros-latest.list && \
+    apt-get update && \
+    apt-get install -y ros-noetic-mavros ros-noetic-mavros-extras
+    
 ENTRYPOINT [ "/custom_entrypoint.sh" ]

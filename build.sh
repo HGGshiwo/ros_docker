@@ -34,7 +34,28 @@ fi
 IMAGE_NAME="ros-desktop-vnc"
 FULL_TAG="${IMAGE_NAME}:${TAG}"
 
+# ================= 新增：自动获取环境变量 =================
+BUILD_ARGS=()
+
+# 定义需要传递的环境变量列表（通常主要是代理设置）
+# 你可以根据需要在列表中添加你自己的自定义环境变量
+VARS_TO_PASS=(
+    "http_proxy" "https_proxy" "ftp_proxy" "no_proxy"
+    "HTTP_PROXY" "HTTPS_PROXY" "FTP_PROXY" "NO_PROXY"
+)
+
+for var in "${VARS_TO_PASS[@]}"; do
+    # ${!var} 是 bash 的间接变量引用，用于获取变量的值
+    if [ -n "${!var}" ]; then
+        BUILD_ARGS+=(--build-arg "$var")
+        echo "检测到环境变量: $var=${!var}，将传递给 Docker"
+    fi
+done
+# ==========================================================
+
 echo "开始构建 Docker 镜像: ${FULL_TAG}，使用文件: ${DOCKERFILE}..."
-docker build -f "$DOCKERFILE" -t "$FULL_TAG" .
+
+# 在构建命令中展开 ${BUILD_ARGS[@]}
+docker build "${BUILD_ARGS[@]}" -f "$DOCKERFILE" -t "$FULL_TAG" .
 
 echo "构建成功"
