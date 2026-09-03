@@ -1,0 +1,18 @@
+FROM ros-desktop-vnc:zb1.0
+
+
+RUN echo "Acquire::http::Proxy \"${http_proxy}\";" > /etc/apt/apt.conf.d/99proxy && \
+    echo "Acquire::https::Proxy \"${https_proxy}\";" >> /etc/apt/apt.conf.d/99proxy
+
+RUN sed -i 's/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list && \
+    echo "Acquire::Retries \"10\";" > /etc/apt/apt.conf.d/80-retries && \
+    apt-get -o Acquire::Check-Valid-Until=false update
+    
+WORKDIR /tmp
+COPY catkin_ws/src/jie_3d_nav_ros1/install_deps_noetic.sh .
+RUN export ROS_MASTER_URI=http://localhost:11311 && \
+    source /opt/ros/noetic/setup.bash && ./install_deps_noetic.sh
+
+RUN apt-get install -y ros-noetic-move-base
+
+RUN rm -f /etc/apt/apt.conf.d/99proxy

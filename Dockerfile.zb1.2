@@ -1,0 +1,19 @@
+FROM ros-desktop-vnc:zb1.1
+
+
+RUN echo "Acquire::http::Proxy \"${http_proxy}\";" > /etc/apt/apt.conf.d/99proxy && \
+    echo "Acquire::https::Proxy \"${https_proxy}\";" >> /etc/apt/apt.conf.d/99proxy
+
+RUN apt-get install -y ros-noetic-octomap-server
+
+# 1. 创建全局的 pip 配置文件目录
+RUN mkdir -p /etc/pip.conf.d
+
+# 2. 写入全局配置：强制 pip 把所有包安装到系统全局的 dist-packages，彻底禁用 --user 模式
+RUN echo "[global]" > /etc/pip.conf && \
+    echo "target = /usr/local/lib/python3.8/dist-packages" >> /etc/pip.conf && \
+    echo "no-user-config = true" >> /etc/pip.conf
+
+RUN python3 -m pip install --no-cache-dir fastapi pydantic uvicorn
+RUN rm -f /etc/apt/apt.conf.d/99proxy
+WORKDIR /
