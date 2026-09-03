@@ -2,7 +2,7 @@ services:
   desktop:
     build: .
     container_name: ubuntu_desktop
-    image: ros-desktop-vnc:zb1.2
+    image: ros-desktop-vnc:zb1.3
     environment:
       - VNC_PORT=6080
     volumes:

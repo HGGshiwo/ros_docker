@@ -1,5 +1,5 @@
 services:
   desktop:
     network_mode: host
-    environment:
-      - FCU_URL=tcp://127.0.0.1:5760
+    devices:
+      - "/dev/ttyS5:/dev/ttyS5"   # 映射 USB 转串口设备

@@ -15,10 +15,10 @@ run_in_terminal() {
 sleep 3
 
 # 2. 启动第一个 launch (它会自动初始化并拉起 ROS Master)
-run_in_terminal "Bridge Mavlink Node" "roslaunch bridge_mavlink bridge_mavlink.launch"
+run_in_terminal "Bridge Mavlink Node" "roslaunch api_routes api_routes_real.launch"
 
 # 3. 延时 5 秒，等待第一个 launch 把 ROS Master 彻底建立起来
 sleep 5
 
 # 4. 启动第二个 launch (它会直接接入上一步创建好的 Master)
-run_in_terminal "Bridge Routes Node" "roslaunch bridge_routes bridge_routes.launch"
+run_in_terminal "Bridge mqtt Node" "roslaunch mqtt_task_bridge mqtt_task_bridge.launch"
