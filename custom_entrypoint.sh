@@ -6,7 +6,12 @@ if [ -f "/entrypoint.sh" ]; then
     echo "* Patching VNC port in /entrypoint.sh to support VNC_PORT (default: 6080)"
     sed -i 's|websockify --web=/usr/lib/novnc 80|websockify --web=/usr/lib/novnc ${VNC_PORT:-6080}|g' /entrypoint.sh
     echo "* Patching /entrypoint.sh to add ubuntu user to dialout group"
-    sed -i 's|usermod -aG sudo ubuntu|usermod -aG sudo,dialout ubuntu|g' /entrypoint.sh
+    sed -i 's|-G sudo,adm|-G sudo,adm,dialout|g' /entrypoint.sh
+    sed -i 's|-G sudo|-G sudo,dialout|g' /entrypoint.sh
+    sed -i 's|usermod -aG sudo|usermod -aG sudo,dialout|g' /entrypoint.sh
+    if ! grep -q "dialout" /entrypoint.sh; then
+        sed -i '/useradd/a usermod -aG dialout ubuntu 2>/dev/null || true' /entrypoint.sh
+    fi
 fi
 
 # 创建 /home/ubuntu 目录以防尚未创建

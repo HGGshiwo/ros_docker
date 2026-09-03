@@ -6,6 +6,7 @@ services:
     environment:
       - VNC_PORT=6080
     volumes:
+      - ./custom_entrypoint.sh:/custom_entrypoint.sh
       # 挂载自定义 bashrc 配置文件
       - ./config/my_bashrc:/etc/my_bashrc
       # 挂载宿主机的桌面自启目录，直接映射到容器内 ubuntu 用户的配置中
