@@ -1,10 +1,12 @@
 #!/bin/bash
 set -e
 
-# 动态修改 /entrypoint.sh 中的 VNC 端口（支持通过 VNC_PORT 环境变量控制，默认为 6080）
+# 动态修改 /entrypoint.sh 中的 VNC 端口（支持通过 VNC_PORT 环境变量控制，默认为 6080）及用户组设置
 if [ -f "/entrypoint.sh" ]; then
     echo "* Patching VNC port in /entrypoint.sh to support VNC_PORT (default: 6080)"
     sed -i 's|websockify --web=/usr/lib/novnc 80|websockify --web=/usr/lib/novnc ${VNC_PORT:-6080}|g' /entrypoint.sh
+    echo "* Patching /entrypoint.sh to add ubuntu user to dialout group"
+    sed -i 's|usermod -aG sudo ubuntu|usermod -aG sudo,dialout ubuntu|g' /entrypoint.sh
 fi
 
 # 创建 /home/ubuntu 目录以防尚未创建
@@ -43,10 +45,18 @@ if [ -d "/home/ubuntu" ]; then
 fi
 
 # 2. 递归地将其它挂载的子目录和可写文件所有权修改为 1000:1000
-for path in "$UBUNTU_BASHRC" "/home/ubuntu/.config" "/home/ubuntu/catkin_ws" "/home/ubuntu/setup_env" "/home/ubuntu/setup_env.sh" "/home/ubuntu/my_terminal_autostart"; do
+for path in "$UBUNTU_BASHRC" "/home/ubuntu/.config" "/home/ubuntu/catkin_ws" "/home/ubuntu/setup_env" "/home/ubuntu/setup_env.sh" "/home/ubuntu/my_terminal_autostart" "/etc/supervisor/custom.d"; do
     if [ -e "$path" ]; then
         echo "* Setting ownership of $path to 1000:1000"
         chown -R 1000:1000 "$path"
+    fi
+done
+
+# 3. 自动为自启目录（桌面自启、Supervisor配置、终端自启）添加可执行权限
+for path in "/home/ubuntu/.config/autostart" "/etc/supervisor/custom.d" "/home/ubuntu/my_terminal_autostart"; do
+    if [ -e "$path" ]; then
+        echo "* Setting executable permissions (+x) for $path"
+        chmod -R +x "$path"
     fi
 done
 
