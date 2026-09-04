@@ -12,7 +12,7 @@ run_in_terminal() {
 }
 
 # 1. 等待 VNC 桌面环境初始化完毕
-sleep 3
+sleep 30
 
 # 2. 启动第一个 launch (它会自动初始化并拉起 ROS Master)
 run_in_terminal "Bridge Mavlink Node" "roslaunch api_routes api_routes_real.launch"
