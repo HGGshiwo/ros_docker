@@ -2,7 +2,7 @@ services:
   desktop:
     build: .
     container_name: ubuntu_desktop
-    image: ros-desktop-vnc:zb1.3
+    image: ros-desktop-vnc:dankong
     environment:
       - VNC_PORT=6080
     volumes:
@@ -22,7 +22,7 @@ services:
       # 挂载并持久化 Terminator 配置
       - ./config/terminator_config:/home/ubuntu/.config/terminator/config
       # 挂载并持久化 ROS 运行日志
-      - ./logs/ros:/home/ubuntu/.ros/log
+      - ./logs/ros:/home/ubuntu/.ros
       # 挂载并持久化 VS Code 插件
       - ./config/.vscode-server:/home/ubuntu/.vscode-server
       # 只读方式挂载宿主机的 Git 配置以复用凭证和用户名

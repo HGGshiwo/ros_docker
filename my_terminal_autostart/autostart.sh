@@ -14,11 +14,7 @@ run_in_terminal() {
 # 1. 等待 VNC 桌面环境初始化完毕
 sleep 30
 
-# 2. 启动第一个 launch (它会自动初始化并拉起 ROS Master)
-run_in_terminal "Bridge Mavlink Node" "roslaunch api_routes api_routes_real.launch"
-
-# 3. 延时 5 秒，等待第一个 launch 把 ROS Master 彻底建立起来
-sleep 5
-
-# 4. 启动第二个 launch (它会直接接入上一步创建好的 Master)
-run_in_terminal "Bridge mqtt Node" "roslaunch mqtt_task_bridge mqtt_task_bridge.launch"
+# 2. 启动主 launch (它会自动初始化并拉起 ROS Master)
+#    MJPG_HOST / MJPG_PORT 由 start_docker.sh 通过 docker compose 注入
+#    dji.launch 内部已 include rtsp_streams.launch, 不再单独启动 rtsp
+run_in_terminal "dankong" "roslaunch dankong dji.launch mjpg_host:=${MJPG_HOST} mjpg_port:=${MJPG_PORT}"
